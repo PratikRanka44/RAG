@@ -31,6 +31,7 @@ def load_llm():
         api_key=os.getenv("GROQ_API_KEY")
     )
 
+
 @st.cache_resource
 def load_embeddings():
     return HuggingFaceEmbeddings(
