@@ -21,12 +21,14 @@ st.write("Ask anything from your document")
 # -------------------------------
 # 🔑 Load Models (cached)
 # -------------------------------
+import os
+from langchain_groq import ChatGroq
 
 @st.cache_resource
 def load_llm():
     return ChatGroq(
         model="llama-3.1-8b-instant",
-        api_key="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"
+        api_key=os.getenv("GROQ_API_KEY")
     )
 
 @st.cache_resource
