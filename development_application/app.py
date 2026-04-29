@@ -474,29 +474,6 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
 
-    # Quick Concepts
-    st.markdown('<div class="sidebar-section-label">Quick Concepts</div>', unsafe_allow_html=True)
-
-    concepts = [
-        ("Order Blocks", "What is an Order Block in SMC?"),
-        ("BOS / CHoCH", "Explain Break of Structure and Change of Character"),
-        ("Fair Value Gap", "What is a Fair Value Gap (FVG)?"),
-        ("Liquidity", "What is liquidity in Smart Money Concepts?"),
-        ("Inducement", "How does inducement work in SMC?"),
-        ("Premium & Discount", "Explain premium and discount zones in SMC"),
-        ("Market Structure", "How to identify market structure in SMC?"),
-        ("Mitigation Block", "What is a mitigation block?"),
-        ("NWOG / NDOG", "Explain New Week and New Day Opening Gaps"),
-        ("ICT Killzones", "What are ICT killzones and when to trade them?"),
-    ]
-
-    cols = st.columns(2)
-    for i, (label, query) in enumerate(concepts):
-        with cols[i % 2]:
-            if st.button(label, key=f"chip_{i}", use_container_width=True):
-                set_query(query)
-
-    st.markdown("---")
 
     # Clear chat
     st.markdown('<div class="sidebar-section-label">Session</div>', unsafe_allow_html=True)
