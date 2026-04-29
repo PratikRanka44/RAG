@@ -57,7 +57,7 @@ def load_embeddings():
 def load_vectorstore():
     embeddings = load_embeddings()
 
-    # ✅ Ensure this path exists in your repo
+    # ⚠️ Ensure this path exists in your repo
     loader = PyPDFLoader("development_application/data/Flipping-Markets-Trading-Plan-V2.pdf")
     documents = loader.load()
 
@@ -110,10 +110,10 @@ if query:
     with st.chat_message("user"):
         st.write(query)
 
-    # Get response
     with st.spinner("Analyzing market structure..."):
         docs = retriever.invoke(query)
         context = "\n".join([doc.page_content for doc in docs])
+
         prompt = f"""
 You are an expert Smart Money Concepts (SMC) Forex mentor.
 
@@ -129,11 +129,11 @@ Question:
 """
 
         response = llm.invoke(prompt)
-answer = response.content.strip()
+        answer = response.content.strip()
 
-# ✅ Fallback logic
-if "NOT_FOUND" in answer:
-    answer = """
+        # ✅ Fallback logic
+        if answer == "NOT_FOUND":
+            answer = """
 ❌ We can't help with that.
 
 💡 You can ask questions related to:
