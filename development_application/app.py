@@ -42,15 +42,25 @@ def load_embeddings():
 @st.cache_resource
 def load_vectorstore():
     embeddings = load_embeddings()
-    return FAISS.load_local(
-        "faiss_index",
-        embeddings,
-        allow_dangerous_deserialization=True
+
+    from langchain_community.document_loaders import PyPDFLoader
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+    loader = PyPDFLoader(
+        "development_application/data/Flipping-Markets-Trading-Plan-V2.pdf"
+    )
+    documents = loader.load()
+
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=1000,
+        chunk_overlap=200
     )
 
-llm = load_llm()
-vectorstore = load_vectorstore()
-retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+    texts = splitter.split_documents(documents)
+
+    vectorstore = FAISS.from_documents(texts, embeddings)
+
+    return vectorstore
 
 # -------------------------------
 # 💬 Chat UI
