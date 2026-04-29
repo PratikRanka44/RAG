@@ -10,7 +10,7 @@ llm = ChatGroq(
 
 # ✅ Load Data  
 from langchain_community.document_loaders import PyPDFLoader
-loader = PyPDFLoader("development_application/data/Flipping-Markets-Trading-Plan-V2.pdf")
+loader = PyPDFLoader("data/Flipping-Markets-Trading-Plan-V2.pdf")
 documents = loader.load()
 
 # ✅ Split Documents
