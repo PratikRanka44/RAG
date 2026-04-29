@@ -1,4 +1,4 @@
-
+```python
 import streamlit as st
 import os
 
@@ -17,10 +17,10 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 # -------------------------------
 # 🔧 App Config
 # -------------------------------
-st.set_page_config(page_title="RAG Chatbot", layout="wide")
+st.set_page_config(page_title="SMC Forex RAG Assistant", layout="wide")
 
-st.title("📄 RAG Chatbot (PDF आधारित)")
-st.write("Ask anything from your document")
+st.title("📈 SMC Forex RAG Assistant")
+st.caption("Ask anything about Smart Money Concepts (Liquidity, BOS, FVG, Order Blocks)")
 
 
 # -------------------------------
@@ -57,7 +57,7 @@ def load_embeddings():
 def load_vectorstore():
     embeddings = load_embeddings()
 
-    # IMPORTANT: Ensure this path exists in your GitHub repo
+    # ✅ Ensure this path exists in your repo
     loader = PyPDFLoader("development_application/data/Flipping-Markets-Trading-Plan-V2.pdf")
     documents = loader.load()
 
@@ -86,28 +86,40 @@ except Exception as e:
 
 
 # -------------------------------
-# 💬 Chat Memory
+# 💬 Session State
 # -------------------------------
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+
+# -------------------------------
+# 💬 Display Chat
+# -------------------------------
+for role, content in st.session_state.messages:
+    with st.chat_message(role):
+        st.write(content)
 
 
 # -------------------------------
 # 💬 User Input
 # -------------------------------
-query = st.text_input("Ask your question:")
+query = st.chat_input("Ask about liquidity, BOS, FVG, order blocks...")
 
-if st.button("Ask") and query:
+if query:
+    # Show user message
+    with st.chat_message("user"):
+        st.write(query)
 
-    with st.spinner("Thinking..."):
+    # Get response
+    with st.spinner("Analyzing market structure..."):
         docs = retriever.invoke(query)
         context = "\n".join([doc.page_content for doc in docs])
 
         prompt = f"""
-You are a smart assistant.
+You are an expert Smart Money Concepts (SMC) Forex mentor.
 
-Answer ONLY using the context below.
-If the answer is not present, say "Not found in document".
+Answer clearly using ONLY the context below.
+If answer is not present, say "Not found in document".
 
 Context:
 {context}
@@ -119,20 +131,11 @@ Question:
         response = llm.invoke(prompt)
         answer = response.content
 
-        # Save chat
-        st.session_state.chat_history.append(("You", query))
-        st.session_state.chat_history.append(("Bot", answer))
+    # Show assistant response
+    with st.chat_message("assistant"):
+        st.write(answer)
 
-        # Clear input to prevent loop
-        st.rerun()
-
-
-# -------------------------------
-# 📜 Display Chat
-# -------------------------------
-for role, msg in st.session_state.chat_history:
-    if role == "You":
-        st.markdown(f"**🧑 You:** {msg}")
-    else:
-        st.markdown(f"**🤖 Bot:** {msg}")
-
+    # Save messages
+    st.session_state.messages.append(("user", query))
+    st.session_state.messages.append(("assistant", answer))
+```
