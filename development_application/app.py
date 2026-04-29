@@ -393,16 +393,7 @@ hr { border-color: #1C2333 !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------------------
-# 🚀 Initialize Models
-# -------------------------------
-try:
-    llm = load_llm()
-    vectorstore = load_vectorstore()
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
-except Exception as e:
-    st.error(f"Initialization failed: {e}")
-    st.stop()
+
 
 
 # -------------------------------
@@ -443,6 +434,17 @@ if "query_input" not in st.session_state:
 # -------------------------------
 def set_query(text):
     st.session_state.query_input = text
+
+# -------------------------------
+# 🚀 Initialize Models
+# -------------------------------
+try:
+    llm = load_llm()
+    vectorstore = load_vectorstore()
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+except Exception as e:
+    st.error(f"Initialization failed: {e}")
+    st.stop()
 
 
 # -------------------------------
