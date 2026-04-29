@@ -103,7 +103,7 @@ for role, content in st.session_state.messages:
 # -------------------------------
 # 💬 User Input
 # -------------------------------
-query = st.chat_input("Ask about liquidity, BOS, FVG, order blocks...")
+query = st.chat_input("Ask about liquidity, BOS, Supply & Demand, order blocks...")
 
 if query:
     # Show user message
