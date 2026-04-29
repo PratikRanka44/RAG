@@ -20,7 +20,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 st.set_page_config(page_title="SMC Forex RAG Assistant", layout="wide")
 
 st.title("📈 SMC Forex RAG Assistant")
-st.caption("Ask anything about Smart Money Concepts (Liquidity, BOS, FVG, Order Blocks)")
+st.caption("Ask anything about Smart Money Concepts (Liquidity, BOS,Supply & Demand, Order Blocks)")
 
 
 # -------------------------------
@@ -140,7 +140,7 @@ Question:
 - Liquidity
 - Order Blocks
 - Break of Structure (BOS)
-- Fair Value Gaps (FVG)
+- Supply & Demand
 - Market Structure
 """
 
