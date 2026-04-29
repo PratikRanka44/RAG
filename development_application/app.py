@@ -1,4 +1,4 @@
-```python
+
 import streamlit as st
 import os
 
@@ -138,4 +138,4 @@ Question:
     # Save messages
     st.session_state.messages.append(("user", query))
     st.session_state.messages.append(("assistant", answer))
-```
+
