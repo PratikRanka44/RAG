@@ -114,8 +114,7 @@ if query:
     with st.spinner("Analyzing market structure..."):
         docs = retriever.invoke(query)
         context = "\n".join([doc.page_content for doc in docs])
-
-      prompt = f"""
+        prompt = f"""
 You are an expert Smart Money Concepts (SMC) Forex mentor.
 
 Rules:
