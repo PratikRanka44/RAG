@@ -115,11 +115,12 @@ if query:
         docs = retriever.invoke(query)
         context = "\n".join([doc.page_content for doc in docs])
 
-        prompt = f"""
+      prompt = f"""
 You are an expert Smart Money Concepts (SMC) Forex mentor.
 
-Answer clearly using ONLY the context below.
-If answer is not present, say "Not found in document".
+Rules:
+1. Answer ONLY from the context below.
+2. If the answer is clearly NOT in the context, reply EXACTLY with: NOT_FOUND
 
 Context:
 {context}
@@ -129,7 +130,20 @@ Question:
 """
 
         response = llm.invoke(prompt)
-        answer = response.content
+answer = response.content.strip()
+
+# ✅ Fallback logic
+if "NOT_FOUND" in answer:
+    answer = """
+❌ We can't help with that.
+
+💡 You can ask questions related to:
+- Liquidity
+- Order Blocks
+- Break of Structure (BOS)
+- Fair Value Gaps (FVG)
+- Market Structure
+"""
 
     # Show assistant response
     with st.chat_message("assistant"):
