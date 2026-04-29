@@ -406,7 +406,15 @@ def load_llm():
 def load_embeddings():
     return HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-@st.cache_resource def load_vectorstore(): embeddings = load_embeddings() # Load PDF (make sure this path exists in repo) loader = PyPDFLoader( "development_application/data/Flipping-Markets-Trading-Plan-V2.pdf" ) documents = loader.load() # Split into chunks splitter = RecursiveCharacterTextSplitter( chunk_size=1000, chunk_overlap=200 ) texts = splitter.split_documents(documents) # Create FAISS index vectorstore = FAISS.from_documents(texts, embeddings) return vectorstore
+@st.cache_resource 
+def load_vectorstore():
+    embeddings = load_embeddings()  
+    loader = PyPDFLoader( "development_application/data/Flipping-Markets-Trading-Plan-V2.pdf" ) 
+    documents = loader.load()  
+    splitter = RecursiveCharacterTextSplitter( chunk_size=1000, chunk_overlap=200 ) 
+    texts = splitter.split_documents(documents)  
+    vectorstore = FAISS.from_documents(texts, embeddings) 
+    return vectorstore
 
 # -------------------------------
 # 📦 Session State
