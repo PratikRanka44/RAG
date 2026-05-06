@@ -6,7 +6,7 @@ A production-ready Retrieval-Augmented Generation (RAG) chatbot that allows user
 📄 Query PDF documents using natural language
 ⚡ Fast responses powered by Groq LLM
 🧠 Semantic search using embeddings
-💾 Persistent vector database (FAISS)
+💾 Persistent vector database (FAISS)  
 💬 Chat interface with session history
 🔍 Context-aware answers (no hallucination)
 🧠 How It Works
