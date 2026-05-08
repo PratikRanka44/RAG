@@ -28,17 +28,16 @@ st.caption("Ask anything about Smart Money Concepts (Liquidity, BOS, Supply & De
 # -------------------------------
 @st.cache_resource
 def load_llm():
-    api_key = os.getenv("GROQ_API_KEY")
+    groq_key = st.secrets["GROQ_API_KEY"]
 
     if not api_key:
         st.error("GROQ_API_KEY not found. Set it in Streamlit Secrets.")
         st.stop()
 
     return ChatGroq(
-        model="llama-3.1-8b-instant",
-        api_key=api_key
+    groq_api_key=groq_key,
+    model_name="llama-3.1-8b-instant",
     )
-
 
 # -------------------------------
 # 🔍 Load Embeddings (cached)
