@@ -1,154 +1,257 @@
-
 import streamlit as st
-import os
-
-# LLM
 from langchain_groq import ChatGroq
 
 # Embeddings + Vector DB
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-# Document Loader + Splitter
+# PDF Loader + Splitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
+# LangChain Prompt
+from langchain_core.prompts import ChatPromptTemplate
 
-# -------------------------------
-# 🔧 App Config
-# -------------------------------
-st.set_page_config(page_title="SMC Forex RAG Assistant", layout="wide")
+# =========================================================
+# PAGE CONFIG
+# =========================================================
+
+st.set_page_config(
+    page_title="SMC Forex RAG Assistant",
+    page_icon="📈",
+    layout="wide"
+)
 
 st.title("📈 SMC Forex RAG Assistant")
-st.caption("Ask anything about Smart Money Concepts (Liquidity, BOS, Supply & Demand, Order Blocks)")
+st.caption(
+    "Ask anything about Smart Money Concepts, Liquidity, BOS, "
+    "Supply & Demand, Order Blocks, Market Structure"
+)
 
+# =========================================================
+# LOAD LLM
+# =========================================================
 
-# -------------------------------
-# 🔑 Load LLM (cached)
-# -------------------------------
 @st.cache_resource
 def load_llm():
-    api_key = os.getenv("GROQ_API_KEY")
 
-    if not api_key:
-        st.error("GROQ_API_KEY not found. Set it in Streamlit Secrets.")
-        st.stop()
+    api_key = st.secrets["GROQ_API_KEY"]
 
-    return ChatGroq(
+    llm = ChatGroq(
         model="llama-3.1-8b-instant",
-        api_key=api_key
+        api_key=api_key,
+        temperature=0
     )
 
+    return llm
 
-# -------------------------------
-# 🔍 Load Embeddings (cached)
-# -------------------------------
+
+# =========================================================
+# LOAD EMBEDDINGS
+# =========================================================
+
 @st.cache_resource
 def load_embeddings():
-    return HuggingFaceEmbeddings(
+
+    embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/all-MiniLM-L6-v2"
     )
 
+    return embeddings
 
-# -------------------------------
-# 📚 Load & Create Vectorstore
-# -------------------------------
+
+# =========================================================
+# CREATE VECTOR DATABASE
+# =========================================================
+
 @st.cache_resource
-def load_vectorstore():
+def create_vectorstore():
+
     embeddings = load_embeddings()
 
-    # ⚠️ Ensure this path exists in your repo
-    loader = PyPDFLoader("development_application/data/Flipping-Markets-Trading-Plan-V2.pdf")
-    documents = loader.load()
+    # -----------------------------------------------------
+    # LOAD MULTIPLE PDFs
+    # -----------------------------------------------------
+
+    pdf_files = [
+        "development_application/data/file1.pdf",
+        "development_application/data/file2.pdf",
+        "development_application/data/file3.pdf"
+    ]
+
+    documents = []
+
+    for pdf in pdf_files:
+
+        loader = PyPDFLoader(pdf)
+
+        docs = loader.load()
+
+        documents.extend(docs)
+
+    # -----------------------------------------------------
+    # CHUNKING
+    # -----------------------------------------------------
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200
     )
 
-    texts = splitter.split_documents(documents)
+    chunks = splitter.split_documents(documents)
 
-    vectorstore = FAISS.from_documents(texts, embeddings)
+    # -----------------------------------------------------
+    # CREATE VECTORSTORE
+    # -----------------------------------------------------
+
+    vectorstore = FAISS.from_documents(
+        chunks,
+        embeddings
+    )
 
     return vectorstore
 
 
-# -------------------------------
-# 🚀 Initialize Models
-# -------------------------------
+# =========================================================
+# INITIALIZE APP
+# =========================================================
+
 try:
+
     llm = load_llm()
-    vectorstore = load_vectorstore()
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+
+    vectorstore = create_vectorstore()
+
+    retriever = vectorstore.as_retriever(
+        search_kwargs={"k": 3}
+    )
+
 except Exception as e:
-    st.error(f"Initialization failed: {e}")
+
+    st.error(f"Initialization Error: {e}")
+
     st.stop()
 
 
-# -------------------------------
-# 💬 Session State
-# -------------------------------
+# =========================================================
+# CHAT HISTORY
+# =========================================================
+
 if "messages" not in st.session_state:
+
     st.session_state.messages = []
 
 
-# -------------------------------
-# 💬 Display Chat
-# -------------------------------
+# =========================================================
+# DISPLAY OLD CHATS
+# =========================================================
+
 for role, content in st.session_state.messages:
+
     with st.chat_message(role):
+
         st.write(content)
 
 
-# -------------------------------
-# 💬 User Input
-# -------------------------------
-query = st.chat_input("Ask about liquidity, BOS, Supply & Demand, order blocks...")
+# =========================================================
+# USER INPUT
+# =========================================================
+
+query = st.chat_input(
+    "Ask about liquidity, BOS, order blocks, market structure..."
+)
+
+# =========================================================
+# PROCESS QUERY
+# =========================================================
 
 if query:
-    # Show user message
+
+    # -----------------------------------------------------
+    # SHOW USER MESSAGE
+    # -----------------------------------------------------
+
     with st.chat_message("user"):
+
         st.write(query)
 
-    with st.spinner("Analyzing market structure..."):
-        docs = retriever.invoke(query)
-        context = "\n".join([doc.page_content for doc in docs])
+    st.session_state.messages.append(("user", query))
 
-        prompt = f"""
+    # -----------------------------------------------------
+    # RETRIEVAL + GENERATION
+    # -----------------------------------------------------
+
+    with st.spinner("Analyzing market structure..."):
+
+        # Retrieve documents
+        docs = retriever.invoke(query)
+
+        # Combine context
+        context = "\n\n".join(
+            [doc.page_content for doc in docs]
+        )
+
+        # -------------------------------------------------
+        # PROMPT
+        # -------------------------------------------------
+
+        prompt = ChatPromptTemplate.from_template("""
 You are an expert Smart Money Concepts (SMC) Forex mentor.
 
 Rules:
 1. Answer ONLY from the context below.
-2. If the answer is clearly NOT in the context, reply EXACTLY with: NOT_FOUND
+2. Keep answers clear and practical.
+3. If answer is not found in context, reply EXACTLY:
+NOT_FOUND
 
 Context:
 {context}
 
 Question:
-{query}
-"""
+{question}
+""")
 
-        response = llm.invoke(prompt)
+        final_prompt = prompt.format_messages(
+            context=context,
+            question=query
+        )
+
+        # -------------------------------------------------
+        # LLM RESPONSE
+        # -------------------------------------------------
+
+        response = llm.invoke(final_prompt)
+
         answer = response.content.strip()
 
-        # ✅ Fallback logic
+        # -------------------------------------------------
+        # FALLBACK RESPONSE
+        # -------------------------------------------------
+
         if answer == "NOT_FOUND":
+
             answer = """
 ❌ We can't help with that.
 
 💡 You can ask questions related to:
+
 - Liquidity
-- Order Blocks
 - Break of Structure (BOS)
-- Supply & Demand
 - Market Structure
+- Order Blocks
+- Supply & Demand
+- Fair Value Gaps
+- Smart Money Concepts
 """
 
-    # Show assistant response
+    # -----------------------------------------------------
+    # SHOW ASSISTANT RESPONSE
+    # -----------------------------------------------------
+
     with st.chat_message("assistant"):
+
         st.write(answer)
 
-    # Save messages
-    st.session_state.messages.append(("user", query))
-    st.session_state.messages.append(("assistant", answer))
-
+    st.session_state.messages.append(
+        ("assistant", answer)
+    )
