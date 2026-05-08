@@ -1,7 +1,7 @@
 📄 RAG Chatbot with Groq + FAISS + Streamlit
  
 A production-ready Retrieval-Augmented Generation (RAG) chatbot that allows users to ask questions from a PDF document. Built using **Groq LLM, **FAISS vector database, and **Streamlit UI.
-               
+                  
 🚀 Features
 📄 Query PDF documents using natural language
 ⚡ Fast responses powered by Groq LLM
