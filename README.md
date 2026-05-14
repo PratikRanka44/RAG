@@ -19,9 +19,9 @@ Groq LLM → Answer Generation → UI Display
 LLM: Groq (LLaMA 3.1)
 Embeddings: HuggingFace (all-MiniLM-L6-v2)
 Vector DB: FAISS
-Framework: LangChain
-Frontend: Streamlit
-📂 Project Structure
+Framework: LangChain                  
+Frontend: Streamlit                         
+📂 Project Structure                                         
 development_application/
 │
 ├── app.py                 # Streamlit UI
