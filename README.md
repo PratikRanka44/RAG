@@ -12,12 +12,12 @@ A production-ready Retrieval-Augmented Generation (RAG) chatbot that allows user
 🧠 How It Works 
 PDF → Chunking → Embeddings → FAISS Index
          ↓
-User Query → Embedding → Similarity Search → Context
+User Query → Embedding → Similarity Search → Context.  
          ↓
 Groq LLM → Answer Generation → UI Display
 🛠️ Tech Stack
 LLM: Groq (LLaMA 3.1)
-Embeddings: HuggingFace (all-MiniLM-L6-v2)
+Embeddings: HuggingFace (all-MiniLM-L6-v2).  
 Vector DB: FAISS
 Framework: LangChain                  
 Frontend: Streamlit                         
@@ -28,12 +28,12 @@ development_application/
 ├── utils/
 │   └── rag.py            # RAG backend logic
 ├── data/
-│   └── your_pdf.pdf      # Input document
-├── faiss_index/          # Saved vector database
-├── .env                  # API keys (not committed)
+│   └── your_pdf.pdf      # Input document.  
+├── faiss_index/          # Saved vector database.  
+├── .env                  # API keys (not committed).   
 ├── requirements.txt
 └── README.md
-⚙️ Installation
+⚙️ Installation.  
 1. Clone Repository
 git clone https://github.com/your-username/rag-chatbot.git
 cd rag-chatbot
