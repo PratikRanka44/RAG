@@ -9,7 +9,7 @@ A production-ready Retrieval-Augmented Generation (RAG) chatbot that allows user
 💾 Persistent vector database (FAISS)  
 💬 Chat interface with session history
 🔍 Context-aware answers (no hallucination)
-🧠 How It Works 
+🧠 How It Works          
 PDF → Chunking → Embeddings → FAISS Index
          ↓ 
 User Query → Embedding → Similarity Search → Context.  
