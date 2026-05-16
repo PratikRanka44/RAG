@@ -11,13 +11,13 @@ A production-ready Retrieval-Augmented Generation (RAG) chatbot that allows user
 🔍 Context-aware answers (no hallucination)
 🧠 How It Works 
 PDF → Chunking → Embeddings → FAISS Index
-         ↓
+         ↓ 
 User Query → Embedding → Similarity Search → Context.  
          ↓
 Groq LLM → Answer Generation → UI Display
 🛠️ Tech Stack
 LLM: Groq (LLaMA 3.1)
-Embeddings: HuggingFace (all-MiniLM-L6-v2).  
+Embeddings: HuggingFace (all-MiniLM-L6-v2).     
 Vector DB: FAISS
 Framework: LangChain                  
 Frontend: Streamlit                         
